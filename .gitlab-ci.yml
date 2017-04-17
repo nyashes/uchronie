@@ -4,7 +4,7 @@ pages:
   stage: deploy
   script:
   - mkdir .public
-  - xcopy -r uchronie/* .public /Y /H /S
+  - xcopy uchronie .public /Y /H /S
   - rename .public public
   artifacts:
     paths:
