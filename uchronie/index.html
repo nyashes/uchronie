@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Démonstration unchronie</title>
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <script type="text/javascript" src="Scripts/jquery-3.1.1.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+    <div class="vpartition" id="gameBoard">
+        <div id="header" star="10" view="submodules/header.html"></div>
+        <div class="partition" star="60">
+            <div id="sideBarLeft" star="20" view="submodules/sideBarLeft.html" controller="ressourceListController"></div>
+            <div class="vpartition" star="50">
+                <div id="console" star="60" view="submodules/console.html" controller="consoleController"></div>
+                <div id="actionList" star="40" view="submodules/actionList.html"></div>
+            </div>
+            <div id="targetList" star="30" view="submodules/targetList.html" controller="targetListController"></div>
+        </div>
+        <div id="timelineBlock" star="30" view="submodules/timeline.html" ></div>
+    </div>
+    
+</body>
+</html>

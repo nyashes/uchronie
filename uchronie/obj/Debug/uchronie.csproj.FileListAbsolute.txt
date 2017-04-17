@@ -1,0 +1,6 @@
+c:\users\nem-e\documents\visual studio 2015\Projects\uchronie\uchronie\bin\uchronie.dll.config
+c:\users\nem-e\documents\visual studio 2015\Projects\uchronie\uchronie\bin\uchronie.dll
+c:\users\nem-e\documents\visual studio 2015\Projects\uchronie\uchronie\bin\uchronie.pdb
+c:\users\nem-e\documents\visual studio 2015\Projects\uchronie\uchronie\obj\Debug\uchronie.csprojResolveAssemblyReference.cache
+c:\users\nem-e\documents\visual studio 2015\Projects\uchronie\uchronie\obj\Debug\uchronie.dll
+c:\users\nem-e\documents\visual studio 2015\Projects\uchronie\uchronie\obj\Debug\uchronie.pdb
