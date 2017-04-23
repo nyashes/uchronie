@@ -99,6 +99,33 @@
     color: red;
 }
 
+/*-----------------------------------------------------------------*/
+/*----------------------------actions------------------------------*/
+/*-----------------------------------------------------------------*/
+#actionList {
+    
+}
+
+#actionContainer {
+    min-height: 50%;
+}
+#actionList .cat {
+    display: inline-block;
+}
+#actionList .cat > .name {
+    border: 1px solid black;
+    margin: 4px;
+    cursor: pointer;
+}
+
+#actionList .button {
+    display: inline-block;
+    width: 20%;
+    height: 12%;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
 
 body {
     font-family: 'Segoe UI', sans-serif;

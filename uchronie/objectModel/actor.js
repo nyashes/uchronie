@@ -5,6 +5,18 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var objectModel;
 (function (objectModel) {
+    var actionCat = (function () {
+        function actionCat() {
+        }
+        return actionCat;
+    }());
+    objectModel.actionCat = actionCat;
+    var actionMeta = (function () {
+        function actionMeta() {
+        }
+        return actionMeta;
+    }());
+    objectModel.actionMeta = actionMeta;
     var actor = (function () {
         function actor(name) {
             this.name = name;

@@ -6,6 +6,14 @@ var __extends = (this && this.__extends) || function (d, b) {
 var mainController = (function () {
     function mainController() {
     }
+    mainController.currentTarget = function () {
+        return mainController.submodules["targetListController"]["targetList"]
+            .element.children(".selected").data("controller");
+    };
+    mainController.currentPlayer = function () {
+        return mainController.submodules["targetListController"]["targetList"]
+            .element.children(".player").data("controller");
+    };
     mainController.submodules = {};
     return mainController;
 }());
@@ -19,7 +27,10 @@ var baseController = (function () {
     baseController.prototype.init = function () {
         for (var prop in this.model) {
             if (this.model.hasOwnProperty(prop)) {
-                this.element.find("." + prop).text(this.model[prop]);
+                if (typeof this.model[prop] != "object")
+                    this.element.children("." + prop).text(this.model[prop]);
+                else
+                    this.element.children("." + prop).data("model", this.model[prop]);
             }
         }
     };
@@ -35,10 +46,14 @@ var baseListController = (function (_super) {
         this.displayProprety = baseElement.css("display");
         baseElement.css("display", "none");
         baseElement.addClass('noParse');
-        for (var _i = 0, _a = this.model; _i < _a.length; _i++) {
-            var actor = _a[_i];
-            this.pushItem(actor);
+        if (!this.model) {
+            console.error("error: no model found for list " + this.element.html());
         }
+        else
+            for (var _i = 0, _a = this.model; _i < _a.length; _i++) {
+                var actor = _a[_i];
+                this.pushItem(actor);
+            }
         if (baseElement.attr("controller"))
             mainController.submodules[baseElement.attr("controller")] = [];
     };
@@ -48,12 +63,15 @@ var baseListController = (function (_super) {
         newElement.css("display", this.displayProprety);
         newElement.removeClass("element");
         newElement.removeClass("noParse");
-        if (typeof item != "object")
+        if (typeof item != "object") {
             newElement.text(item);
-        else
+            console.log(item + " put into " + newElement.html());
+        }
+        else {
             newElement.data("model", item);
+            console.log(JSON.stringify(item) + " put into " + newElement.html());
+        }
         this.element.append(newElement);
-        //mvcBinder(newElement);
     };
     return baseListController;
 }(baseController));
@@ -84,6 +102,33 @@ var targetContoller = (function (_super) {
     targetContoller.prototype.hover = function (instance) {
     };
     return targetContoller;
+}(baseController));
+var catController = (function (_super) {
+    __extends(catController, _super);
+    function catController() {
+        _super.apply(this, arguments);
+    }
+    catController.prototype.init = function () {
+        var _this = this;
+        _super.prototype.init.call(this);
+        this.element.children(".name").unbind("click").bind("click", function () {
+            jQuery("#actionContainer").children().remove();
+            jQuery("#actionContainer").append(_this.element.children(".actionList").clone(true, true).css("display", "block"));
+        });
+    };
+    return catController;
+}(baseController));
+var actionController = (function (_super) {
+    __extends(actionController, _super);
+    function actionController() {
+        _super.apply(this, arguments);
+    }
+    actionController.prototype.init = function () {
+        var _this = this;
+        this.element.children(".name").text(this.model.name);
+        this.element.children(".delegate").unbind("click").bind("click", function () { return _this.model.delegate(mainController.currentTarget().model); });
+    };
+    return actionController;
 }(baseController));
 var gameEventController = (function (_super) {
     __extends(gameEventController, _super);
@@ -124,14 +169,6 @@ var ressourceListController = (function (_super) {
         controller.init();
     };
     return ressourceListController;
-}(baseListController));
-;
-var consoleController = (function (_super) {
-    __extends(consoleController, _super);
-    function consoleController() {
-        _super.apply(this, arguments);
-    }
-    return consoleController;
 }(baseListController));
 ;
 var targetListController = (function (_super) {
@@ -206,6 +243,56 @@ function makePageLayout(rootNode) {
     rootNode.children(".vpartition").each(function (dum, element) { computeStars("height", jQuery(element)); });
 }
 jQuery(function () {
+    jQuery("#actionList").data("model", [
+        {
+            name: "soin",
+            actionList: [
+                {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                }
+            ]
+        },
+        {
+            name: "ordre",
+            actionList: [
+                {
+                    name: "demander d'ausculter",
+                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
+                    delegate: function (actor) { alert(this.name + " a ausculté : " + actor.name); }
+                }
+            ]
+        },
+    ]);
     jQuery("#console").data("model", [
         {
             action: "alert('demande de livraison automatique'); mainController.submodules.ressourceListController.sideBarLeft.add('morphine', 50);",

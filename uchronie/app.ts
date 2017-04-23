@@ -3,6 +3,16 @@
 class mainController {
     static submodules: { [key: string]: { [key: string]: any } } = {};
 
+    public static currentTarget(): baseController<objectModel.animatedActor> {
+        return mainController.submodules["targetListController"]["targetList"]
+            .element.children(".selected").data("controller");
+    }
+
+    public static currentPlayer(): baseController<objectModel.animatedActor> {
+        return mainController.submodules["targetListController"]["targetList"]
+            .element.children(".player").data("controller");
+    }
+
     constructor() {
 
     }
@@ -20,7 +30,10 @@ class baseController<T> {
     public init() {
         for (var prop in this.model) {
             if (this.model.hasOwnProperty(prop)) {
-                this.element.find("." + prop).text(this.model[prop]);
+                if (typeof this.model[prop] != "object")
+                    this.element.children("." + prop).text(this.model[prop]);
+                else
+                    this.element.children("." + prop).data("model", this.model[prop]);
             }
         }
     }
@@ -34,7 +47,10 @@ class baseListController<T> extends baseController<T[]> {
         this.displayProprety = baseElement.css("display");
         baseElement.css("display", "none");
         baseElement.addClass('noParse');
-        for (let actor of this.model) {
+        if (!this.model) {
+            console.error("error: no model found for list " + this.element.html());
+        }
+        else for (let actor of this.model) {
             this.pushItem(actor);
         }
         if (baseElement.attr("controller"))
@@ -46,13 +62,15 @@ class baseListController<T> extends baseController<T[]> {
         newElement.css("display", this.displayProprety);
         newElement.removeClass("element");
         newElement.removeClass("noParse");
-        if (typeof item != "object")
+        if (typeof item != "object") {
             newElement.text(item as any);
-        else
+            console.log(item + " put into " + newElement.html());
+        }
+        else {
             newElement.data("model", item);
-
+            console.log(JSON.stringify(item) + " put into " + newElement.html());
+        }
         this.element.append(newElement);
-        //mvcBinder(newElement);
     }
 }
 
@@ -78,6 +96,24 @@ class targetContoller extends baseController<objectModel.animatedActor>{
         this.element.addClass("selected");
     }
     public hover(instance: targetContoller) {
+    }
+}
+
+class catController extends baseController<objectModel.actionCat> {
+    public init() {
+        super.init();
+        this.element.children(".name").unbind("click").bind("click", () => {
+            jQuery("#actionContainer").children().remove();
+            jQuery("#actionContainer").append(this.element.children(".actionList").clone(true, true).css("display", "block"));
+        });
+    }
+}
+
+class actionController extends baseController<objectModel.actionMeta> {
+    public init() {
+        this.element.children(".name").text(this.model.name);
+        this.element.children(".delegate").unbind("click").bind("click",
+            () => this.model.delegate(mainController.currentTarget().model));
     }
 }
 
@@ -107,7 +143,7 @@ class ressourceListController extends baseListController<objectModel.ressource> 
         controller.init();
     }
 };
-class consoleController extends baseListController<objectModel.gameEvent> { };
+
 class targetListController extends baseListController<objectModel.animatedActor> {
     public select(name: string) {
         let toSelect = this.element.children("#" + name).data("controller");
@@ -187,6 +223,56 @@ function makePageLayout(rootNode) {
 }
 
 jQuery(() => {
+    jQuery("#actionList").data("model", [
+        {
+            name: "soin",
+            actionList: [
+                {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }, {
+                    name: "ausculter",
+                    signature: ["objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                }
+            ]
+        },
+        {
+            name: "ordre",
+            actionList: [
+                {
+                    name: "demander d'ausculter",
+                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
+                    delegate: function (actor: objectModel.animatedActor) { alert(this.name + " a ausculté : " + actor.name); }
+                }
+            ]
+        },
+    ]);
     jQuery("#console").data("model", [
         {
             action: "alert('demande de livraison automatique'); mainController.submodules.ressourceListController.sideBarLeft.add('morphine', 50);",
