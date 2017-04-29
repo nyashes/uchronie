@@ -346,14 +346,14 @@ jQuery(() => {
         { name: "perche", quantity: 3, unit: "unités" }
     ]);
     jQuery("#targetList").data("model", [
-        { name: "Joueur", infos: ["médecin leader"], avatarUrl: "/images/victeams2.png" },
-        { name: "Infirmier julien", infos: ["Efficace en pansements", "efficace en perfusions"], avatarUrl: "/images/victeams2.png" },
-        { name: "Auxiliaire jacob", infos: [""], avatarUrl: "/images/victeams2.png" },
-        { name: "Auxiliaire julie", infos: [], avatarUrl: "/images/victeams1.png" },
-        { name: "Blessé 1", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
-        { name: "Blessé 2", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
-        { name: "Blessé 3", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
-        { name: "Blessé 4", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
+        { name: "Joueur", infos: ["médecin leader"], avatarUrl: "./images/victeams2.png" },
+        { name: "Infirmier julien", infos: ["Efficace en pansements", "efficace en perfusions"], avatarUrl: "./images/victeams2.png" },
+        { name: "Auxiliaire jacob", infos: [""], avatarUrl: "./images/victeams2.png" },
+        { name: "Auxiliaire julie", infos: [], avatarUrl: "./images/victeams1.png" },
+        { name: "Blessé 1", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
+        { name: "Blessé 2", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
+        { name: "Blessé 3", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
+        { name: "Blessé 4", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
 
     ]);
 });
