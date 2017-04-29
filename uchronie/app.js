@@ -83,7 +83,7 @@ var targetContoller = (function (_super) {
     targetContoller.prototype.init = function () {
         var _this = this;
         this.element.attr("id", this.model.name);
-        this.element.find(".avatar").attr("src", this.model.avatarUrl);
+        this.element.find(".avatar").css("background-image", "url('" + this.model.avatarUrl + "')");
         this.element.find(".name").text(this.model.name);
         this.element.find(".infos").data("model", this.model.infos);
         this.element.unbind('click').bind('click', function () { return _this.click(_this); });
@@ -183,6 +183,51 @@ var targetListController = (function (_super) {
     return targetListController;
 }(baseListController));
 ;
+var timelineController = (function (_super) {
+    __extends(timelineController, _super);
+    function timelineController() {
+        _super.apply(this, arguments);
+    }
+    timelineController.prototype.init = function () {
+        var _this = this;
+        this.dragged = this.element.find('.cursor');
+        this.element.bind("mousemove", function (event) {
+            if (_this.dragging) {
+                _this.changePosition(event.clientX);
+            }
+        });
+        this.dragged.unbind('mousedown').bind('mousedown', function (event) {
+            _this.dragging = true;
+            jQuery("html").bind('mouseup', function () {
+                _this.dragging = false;
+                jQuery("html").unbind('mouseup');
+            });
+        });
+        var play = this.element.find(".playButton");
+        var bindId;
+        play.unbind("click").bind("click", function () {
+            if (play.text() == "play") {
+                bindId = setInterval(function () { return _this.changePosition(_this.currentPosition() + 1); }, 100);
+                play.text("pause");
+            }
+            else {
+                clearInterval(bindId);
+                play.text("play");
+            }
+        });
+        jQuery(function () { return _this.changePosition(0); });
+    };
+    timelineController.prototype.currentPosition = function () {
+        return this.dragged.offset().left;
+    };
+    timelineController.prototype.changePosition = function (pos) {
+        var currentPos = Math.min(pos, this.dragged.parent().width() - 30);
+        this.dragged.css("left", currentPos);
+        this.dragged.prev().css("width", currentPos);
+        this.dragged.next().css("width", (this.dragged.next().parent().width() - currentPos - 30));
+    };
+    return timelineController;
+}(baseController));
 var htmlProperty = (function () {
     function htmlProperty(_html, _attribute) {
         _html.data(_attribute, this);
@@ -248,35 +293,31 @@ jQuery(function () {
             name: "soin",
             actionList: [
                 {
-                    name: "ausculter",
+                    name: "ausculter (complet)",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor) { alert("a ausculté : " + actor.name); }
                 }, {
-                    name: "ausculter",
+                    name: "ausculter (tête)",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor) { alert("a ausculté : " + actor.name); }
                 }, {
-                    name: "ausculter",
+                    name: "ausculter (torse)",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor) { alert("a ausculté : " + actor.name); }
                 }, {
-                    name: "ausculter",
+                    name: "ausculter (jambe)",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor) { alert("a ausculté : " + actor.name); }
                 }, {
-                    name: "ausculter",
+                    name: "opérer",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor) { alert("a ausculté : " + actor.name); }
                 }, {
-                    name: "ausculter",
+                    name: "évacuer",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor) { alert("a ausculté : " + actor.name); }
                 }, {
-                    name: "ausculter",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
-                }, {
-                    name: "ausculter",
+                    name: "vérifier matériel",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor) { alert("a ausculté : " + actor.name); }
                 }
@@ -286,7 +327,17 @@ jQuery(function () {
             name: "ordre",
             actionList: [
                 {
-                    name: "demander d'ausculter",
+                    name: "ordre de médecin",
+                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
+                    delegate: function (actor) { alert(this.name + " a ausculté : " + actor.name); }
+                },
+                {
+                    name: "ordre d'infirmier",
+                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
+                    delegate: function (actor) { alert(this.name + " a ausculté : " + actor.name); }
+                },
+                {
+                    name: "ordre de patient",
                     signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
                     delegate: function (actor) { alert(this.name + " a ausculté : " + actor.name); }
                 }
@@ -300,8 +351,8 @@ jQuery(function () {
         },
         { action: "alert('5 blessés arrivent')", text: "00:31 - message du PMA", eventClass: "notification" },
         {
-            action: "mainController.submodules.targetListController.targetList.select('morty')",
-            text: "00:32 - morty est en danger!",
+            action: "mainController.submodules.targetListController.targetList.select('Blessé 1')",
+            text: "00:32 - Blessé 1 est en danger!",
             eventClass: "critical"
         }
     ]);
@@ -314,15 +365,14 @@ jQuery(function () {
         { name: "perche", quantity: 3, unit: "unités" }
     ]);
     jQuery("#targetList").data("model", [
-        { name: "rick", infos: ["true rick", "SMART", "alcoholic"], avatarUrl: "https://images.moviepilot.com/images/c_limit,q_auto,w_710/vdc49xfybuuua6fd2jjx/everything-we-know-so-far-about-rick-and-morty-season-3.jpg" },
-        { name: "morty", infos: ["true morty", "as dumb as rick is smart", "innocent"], avatarUrl: "http://content.internetvideoarchive.com/content/photos/9249/337362_014.jpg" },
-        { name: "snuffles", infos: ["true snuffles", "uplifted animal", "dream of world domination"], avatarUrl: "http://vignette3.wikia.nocookie.net/rickandmorty/images/7/70/Snuffles-helmet.jpg/revision/latest?cb=20131212193614" },
-        { name: "rick2", infos: [], avatarUrl: "https://images.moviepilot.com/images/c_limit,q_auto,w_710/vdc49xfybuuua6fd2jjx/everything-we-know-so-far-about-rick-and-morty-season-3.jpg" },
-        { name: "morty2", infos: [], avatarUrl: "http://content.internetvideoarchive.com/content/photos/9249/337362_014.jpg" },
-        { name: "snuffles2", infos: [], avatarUrl: "http://vignette3.wikia.nocookie.net/rickandmorty/images/7/70/Snuffles-helmet.jpg/revision/latest?cb=20131212193614" },
-        { name: "rick3", infos: [], avatarUrl: "https://images.moviepilot.com/images/c_limit,q_auto,w_710/vdc49xfybuuua6fd2jjx/everything-we-know-so-far-about-rick-and-morty-season-3.jpg" },
-        { name: "morty3", infos: [], avatarUrl: "http://content.internetvideoarchive.com/content/photos/9249/337362_014.jpg" },
-        { name: "snuffles3", infos: [], avatarUrl: "http://vignette3.wikia.nocookie.net/rickandmorty/images/7/70/Snuffles-helmet.jpg/revision/latest?cb=20131212193614" },
+        { name: "Joueur", infos: ["médecin leader"], avatarUrl: "/images/victeams2.png" },
+        { name: "Infirmier julien", infos: ["Efficace en pansements", "efficace en perfusions"], avatarUrl: "/images/victeams2.png" },
+        { name: "Auxiliaire jacob", infos: [""], avatarUrl: "/images/victeams2.png" },
+        { name: "Auxiliaire julie", infos: [], avatarUrl: "/images/victeams1.png" },
+        { name: "Blessé 1", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
+        { name: "Blessé 2", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
+        { name: "Blessé 3", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
+        { name: "Blessé 4", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "/images/victim.png" },
     ]);
 });
 jQuery(function () { return makePageLayout(jQuery("body")); });

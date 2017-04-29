@@ -23,6 +23,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="images\victeams1.png" />
+    <Content Include="images\victeams2.png" />
+    <Content Include="images\victim.png" />
     <Content Include="index.html" />
     <Content Include="packages.config" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
