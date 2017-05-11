@@ -25,13 +25,22 @@ var baseController = (function () {
         this.init();
     }
     baseController.prototype.init = function () {
-        for (var prop in this.model) {
-            if (this.model.hasOwnProperty(prop)) {
-                if (typeof this.model[prop] != "object")
-                    this.element.children("." + prop).text(this.model[prop]);
+        var _this = this;
+        var _loop_1 = function() {
+            if (this_1.model.hasOwnProperty(prop)) {
+                if (typeof this_1.model[prop] != "object")
+                    this_1.element.children("." + prop).text(this_1.model[prop]);
+                else if (this_1.model[prop].current != undefined) {
+                    var capture_1 = prop;
+                    objectModel.tick.push(function () { return _this.element.children("." + capture_1).text(_this.model[capture_1].current()); });
+                }
                 else
-                    this.element.children("." + prop).data("model", this.model[prop]);
+                    this_1.element.children("." + prop).data("model", this_1.model[prop]);
             }
+        };
+        var this_1 = this;
+        for (var prop in this.model) {
+            _loop_1();
         }
     };
     return baseController;
@@ -163,9 +172,7 @@ var ressourceListController = (function (_super) {
     ressourceListController.prototype.add = function (name, quantity) {
         var controller = this.element.children("#" + name).data("controller");
         var toAdd = this.element.children("#" + name).data("model");
-        toAdd.quantity += quantity;
-        if (toAdd.quantity < 0)
-            toAdd.quantity = 0;
+        toAdd.quantity.setKeyFrame(objectModel.currentTime, Math.max(toAdd.quantity.current() + quantity, 0));
         controller.init();
     };
     return ressourceListController;
@@ -204,18 +211,17 @@ var timelineController = (function (_super) {
             });
         });
         var play = this.element.find(".playButton");
-        var bindId;
         play.unbind("click").bind("click", function () {
             if (play.text() == "play") {
-                bindId = setInterval(function () { return _this.changePosition(_this.currentPosition() + 1); }, 100);
+                objectModel.play();
                 play.text("pause");
             }
             else {
-                clearInterval(bindId);
+                objectModel.pause();
                 play.text("play");
             }
         });
-        jQuery(function () { return _this.changePosition(0); });
+        objectModel.tick.push(function () { return _this.changePosition(objectModel.currentTime); });
     };
     timelineController.prototype.currentPosition = function () {
         return this.dragged.offset().left;
@@ -225,6 +231,7 @@ var timelineController = (function (_super) {
         this.dragged.css("left", currentPos);
         this.dragged.prev().css("width", currentPos);
         this.dragged.next().css("width", (this.dragged.next().parent().width() - currentPos - 30));
+        objectModel.currentTime = currentPos;
     };
     return timelineController;
 }(baseController));
@@ -357,12 +364,12 @@ jQuery(function () {
         }
     ]);
     jQuery("#sideBarLeft").data("model", [
-        { name: "couverture", quantity: 5, unit: "unités" },
-        { name: "pansements", quantity: 100, unit: "unités" },
-        { name: "oxygène", quantity: 500, unit: "L" },
-        { name: "morphine", quantity: 50, unit: "mL" },
-        { name: "augmentin", quantity: 50, unit: "moles" },
-        { name: "perche", quantity: 3, unit: "unités" }
+        new objectModel.ressource("couverture", 5, "unités"),
+        new objectModel.ressource("pansements", 100, "unités"),
+        new objectModel.ressource("oxygène", 500, "L"),
+        new objectModel.ressource("morphine", 50, "mL"),
+        new objectModel.ressource("augmentin", 50, "moles"),
+        new objectModel.ressource("perche", 3, "unités")
     ]);
     jQuery("#targetList").data("model", [
         { name: "Joueur", infos: ["médecin leader"], avatarUrl: "./images/victeams2.png" },

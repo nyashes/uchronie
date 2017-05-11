@@ -1,6 +1,4 @@
-﻿
-
-class mainController {
+﻿class mainController {
     static submodules: { [key: string]: { [key: string]: any } } = {};
 
     public static currentTarget(): baseController<objectModel.animatedActor> {
@@ -32,6 +30,10 @@ class baseController<T> {
             if (this.model.hasOwnProperty(prop)) {
                 if (typeof this.model[prop] != "object")
                     this.element.children("." + prop).text(this.model[prop]);
+                else if (this.model[prop].current != undefined) {
+                    let capture = prop;
+                    objectModel.tick.push(() => this.element.children("." + capture).text(this.model[capture].current()));
+                }
                 else
                     this.element.children("." + prop).data("model", this.model[prop]);
             }
@@ -136,9 +138,7 @@ class ressourceListController extends baseListController<objectModel.ressource> 
     public add(name: string, quantity: number) {
         let controller = this.element.children("#" + name).data("controller");
         let toAdd = this.element.children("#" + name).data("model") as objectModel.ressource;
-        toAdd.quantity += quantity;
-        if (toAdd.quantity < 0)
-            toAdd.quantity = 0;
+        toAdd.quantity.setKeyFrame(objectModel.currentTime, Math.max(toAdd.quantity.current() + quantity, 0));
 
         controller.init();
     }
@@ -172,20 +172,19 @@ class timelineController extends baseController<any> {
         });
 
         let play = this.element.find(".playButton");
-        var bindId: number;
         play.unbind("click").bind("click", () => {
             if (play.text() == "play") {
-                bindId = setInterval(() => this.changePosition(this.currentPosition() + 1), 100);
+                objectModel.play();
                 play.text("pause");
             }
             else { 
-                clearInterval(bindId);
+                objectModel.pause();
                 play.text("play");
             }
 
         });
 
-        jQuery(() => this.changePosition(0));
+        objectModel.tick.push(() => this.changePosition(objectModel.currentTime));
     }
     public currentPosition(): number {
         return this.dragged.offset().left;
@@ -195,6 +194,7 @@ class timelineController extends baseController<any> {
         this.dragged.css("left", currentPos);
         this.dragged.prev().css("width", currentPos);
         this.dragged.next().css("width", (this.dragged.next().parent().width() - currentPos - 30));
+        objectModel.currentTime = currentPos;
     }
 }
 
@@ -338,12 +338,12 @@ jQuery(() => {
         }
     ]);
     jQuery("#sideBarLeft").data("model", [
-        { name: "couverture", quantity: 5, unit: "unités" },
-        { name: "pansements", quantity: 100, unit: "unités" },
-        { name: "oxygène", quantity: 500, unit: "L" },
-        { name: "morphine", quantity: 50, unit: "mL" },
-        { name: "augmentin", quantity: 50, unit: "moles" },
-        { name: "perche", quantity: 3, unit: "unités" }
+        new objectModel.ressource("couverture", 5, "unités"),
+        new objectModel.ressource("pansements",100, "unités" ),
+        new objectModel.ressource("oxygène", 500, "L" ),
+        new objectModel.ressource("morphine", 50, "mL" ),
+        new objectModel.ressource("augmentin", 50, "moles" ),
+        new objectModel.ressource("perche", 3, "unités" )
     ]);
     jQuery("#targetList").data("model", [
         { name: "Joueur", infos: ["médecin leader"], avatarUrl: "./images/victeams2.png" },

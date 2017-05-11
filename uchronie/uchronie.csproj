@@ -46,6 +46,7 @@
     <TypeScriptCompile Include="index.d.ts" />
     <TypeScriptCompile Include="objectModel\actor.ts" />
     <TypeScriptCompile Include="objectModel\gameEvent.ts" />
+    <TypeScriptCompile Include="objectModel\gameState.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />

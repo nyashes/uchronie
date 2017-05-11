@@ -34,8 +34,11 @@ var objectModel;
     objectModel.animatedActor = animatedActor;
     var ressource = (function (_super) {
         __extends(ressource, _super);
-        function ressource() {
-            _super.apply(this, arguments);
+        function ressource(name, quantity, unit) {
+            _super.call(this, name);
+            this.quantity = new objectModel.nonDeterministicState();
+            this.quantity.setKeyFrame(0, quantity);
+            this.unit = unit;
         }
         return ressource;
     }(actor));

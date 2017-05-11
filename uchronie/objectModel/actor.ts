@@ -25,7 +25,13 @@
     }
 
     export class ressource extends actor {
-        quantity: number;
+        quantity = new nonDeterministicState<number>();
         unit: string;
+
+        public constructor(name: string, quantity: number, unit: string) {
+            super(name);
+            this.quantity.setKeyFrame(0, quantity);
+            this.unit = unit;
+        }
     }
 }
