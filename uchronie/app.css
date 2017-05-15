@@ -94,6 +94,12 @@
     cursor: pointer;
 }
 
+#console .discared {
+    display:none;
+    visibility:hidden;
+    height:0;
+}
+
 #console .notification {
     color: green;
 }

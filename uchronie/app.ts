@@ -121,9 +121,16 @@ class actionController extends baseController<objectModel.actionMeta> {
 
 class gameEventController extends baseController<objectModel.gameEvent> {
     public init() {
-        this.element.unbind('click').bind('click', () => { eval(this.model.action); this.element.remove(); });
+        this.element.unbind('click').bind('click', () => {
+            this.model.action();
+            this.model.eventClass.setKeyFrame(objectModel.currentTime, 'discared');
+        });
         this.element.text(this.model.text);
-        this.element.addClass(this.model.eventClass);
+        objectModel.tick.push(() => {
+            this.element.removeClass();
+            this.element.addClass(this.model.eventClass.current());
+        });
+        
     }
 }
 
@@ -326,16 +333,16 @@ jQuery(() => {
         },
     ]);
     jQuery("#console").data("model", [
-        {
-            action: "alert('demande de livraison automatique'); mainController.submodules.ressourceListController.sideBarLeft.add('morphine', 50);",
-            text: "00:30 - plus de morphine", eventClass: "warning"
-        },
-        { action: "alert('5 blessés arrivent')", text: "00:31 - message du PMA", eventClass: "notification" },
-        {
-            action: "mainController.submodules.targetListController.targetList.select('Blessé 1')",
-            text: "00:32 - Blessé 1 est en danger!",
-            eventClass: "critical"
-        }
+        new objectModel.gameEvent(() => {
+            alert('demande de livraison automatique');
+            mainController.submodules["ressourceListController"]["sideBarLeft"].add('morphine', 50);
+        }, "plus de morphine", "warning"),
+        new objectModel.gameEvent(() => {
+            alert('5 blessés arrivent');
+        }, "message du PMA", "notification"),
+        new objectModel.gameEvent(() => {
+            mainController.submodules["targetListController"]["targetList"].select('Blessé 1');
+        }, "Blessé 1 est en danger!", "critical")
     ]);
     jQuery("#sideBarLeft").data("model", [
         new objectModel.ressource("couverture", 5, "unités"),
