@@ -54,6 +54,11 @@
             this.stateStack.push({ t: t, v: v });
             this.stateStack.sort((a, b) => a.t < b.t ? -1 : 1);
         }
+
+        public constructor(v?: T) {
+            if (v != undefined)
+                this.setKeyFrame(0, v);
+        }
     }
 
     export class deterministicState<T> implements IDeterministicState<T> {

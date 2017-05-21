@@ -19,9 +19,34 @@
     }
 
     export class animatedActor extends actor {
+        defiance = new nonDeterministicState<number>(0);
         infos: string[];
         avatarUrl: string;
         constructor(name: string) { super(name); }
+    }
+
+    export class patient extends animatedActor {
+        //certain patients ont suivi une formation de premier soin
+        firstAidSkill = new nonDeterministicState<number>(Math.floor(Math.random() * 80));
+        public constructor(name: string) {
+            super(name);
+            this.defiance.set(0, () => 25 + Math.random() * 25);
+        }
+    }
+
+    export class nurse extends animatedActor {
+        bandAidSkill = new nonDeterministicState<number>(100);
+        firstAidSkill = new nonDeterministicState<number>(100);
+        injectionSkill = new nonDeterministicState<number>(100);
+        perfusionSkill = new nonDeterministicState<number>(100);
+
+    }
+
+    export class doctor extends nurse {
+        examineSkill = new nonDeterministicState<number>(100);
+        //difficile, même les meilleurs échouent parfois
+        operateSkill = new nonDeterministicState<number>(70 + Math.random() * 20);
+
     }
 
     export class ressource extends actor {

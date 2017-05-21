@@ -22,8 +22,10 @@ var objectModel;
         return timedValue;
     }());
     var nonDeterministicState = (function () {
-        function nonDeterministicState() {
+        function nonDeterministicState(v) {
             this.stateStack = [];
+            if (v != undefined)
+                this.setKeyFrame(0, v);
         }
         nonDeterministicState.prototype.current = function () { return this.get(objectModel.currentTime); };
         nonDeterministicState.prototype.get = function (t) {
