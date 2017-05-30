@@ -39,6 +39,7 @@ var objectModel;
             _super.call(this, name);
             //certain patients ont suivi une formation de premier soin
             this.firstAidSkill = new objectModel.nonDeterministicState(Math.floor(Math.random() * 80));
+            this.gravity = new objectModel.nonDeterministicState(1 + (Math.random() - 0.01) * 4);
             this.defiance.set(0, function () { return 25 + Math.random() * 25; });
         }
         return patient;

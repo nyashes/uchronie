@@ -53,6 +53,26 @@
     transition: all 0.3s;
 }
 
+.gravity-0 {
+    background-color: greenyellow;
+}
+
+.gravity-1 {
+    background-color: yellow;
+}
+
+.gravity-2 {
+    background-color: orange;
+}
+
+.gravity-3 {
+    background-color: red;
+}
+
+.gravity-4 {
+    background-color: firebrick;
+}
+
 .actorInfo:hover .infos, .actorInfo.selected .infos{
     width: 50%;
     height: 100%;

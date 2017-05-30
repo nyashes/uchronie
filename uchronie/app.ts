@@ -85,6 +85,11 @@ class targetContoller extends baseController<objectModel.animatedActor>{
 
         this.element.unbind('click').bind('click', () => this.click(this));
     }
+    public updateVisual() {
+        let patient = this.model as objectModel.patient;
+        for (var i = 0; i <= 4; ++i)
+            this.element.toggleClass("gravity-" + i, Math.floor(patient.gravity.current()) ==  i);
+    }
 
     public click(instance: targetContoller) {
         instance.element.siblings(".selected").removeClass("selected");
@@ -283,7 +288,7 @@ jQuery(() => {
                 {
                     name: "ausculter (complet)",
                     signature: ["objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name);  }
                 }, {
                     name: "ausculter (tête)",
                     signature: ["objectModel.animatedActor"],

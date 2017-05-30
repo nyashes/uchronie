@@ -28,6 +28,7 @@
     export class patient extends animatedActor {
         //certain patients ont suivi une formation de premier soin
         firstAidSkill = new nonDeterministicState<number>(Math.floor(Math.random() * 80));
+        gravity = new nonDeterministicState<number>(1 + (Math.random() - 0.01) * 4);
         public constructor(name: string) {
             super(name);
             this.defiance.set(0, () => 25 + Math.random() * 25);

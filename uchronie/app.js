@@ -97,6 +97,11 @@ var targetContoller = (function (_super) {
         this.element.find(".infos").data("model", this.model.infos);
         this.element.unbind('click').bind('click', function () { return _this.click(_this); });
     };
+    targetContoller.prototype.updateVisual = function () {
+        var patient = this.model;
+        for (var i = 0; i <= 4; ++i)
+            this.element.toggleClass("gravity-" + i, Math.floor(patient.gravity.current()) == i);
+    };
     targetContoller.prototype.click = function (instance) {
         instance.element.siblings(".selected").removeClass("selected");
         if (instance.element.hasClass("selected"))
