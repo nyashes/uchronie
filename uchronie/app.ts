@@ -66,17 +66,15 @@ class baseListController<T> extends baseController<T[]> {
         newElement.removeClass("noParse");
         if (typeof item != "object") {
             newElement.text(item as any);
-            console.log(item + " put into " + newElement.html());
         }
         else {
             newElement.data("model", item);
-            console.log(JSON.stringify(item) + " put into " + newElement.html());
         }
         this.element.append(newElement);
     }
 }
 
-class targetContoller extends baseController<objectModel.animatedActor>{
+class targetController extends baseController<objectModel.animatedActor>{
     public init() {
         this.element.attr("id", this.model.name);
         this.element.find(".avatar").css("background-image", "url('" + this.model.avatarUrl + "')");
@@ -91,7 +89,7 @@ class targetContoller extends baseController<objectModel.animatedActor>{
             this.element.toggleClass("gravity-" + i, Math.floor(patient.gravity.current()) ==  i);
     }
 
-    public click(instance: targetContoller) {
+    public click(instance: targetController) {
         instance.element.siblings(".selected").removeClass("selected");
         if (instance.element.hasClass("selected"))
             instance.element.removeClass("selected");
@@ -102,7 +100,7 @@ class targetContoller extends baseController<objectModel.animatedActor>{
         this.element.siblings(".selected").removeClass("selected");
         this.element.addClass("selected");
     }
-    public hover(instance: targetContoller) {
+    public hover(instance: targetController) {
     }
 }
 
@@ -119,8 +117,16 @@ class catController extends baseController<objectModel.actionCat> {
 class actionController extends baseController<objectModel.actionMeta> {
     public init() {
         this.element.children(".name").text(this.model.name);
-        this.element.children(".delegate").unbind("click").bind("click",
-            () => this.model.delegate(mainController.currentTarget().model));
+        this.element.children(".delegate").unbind("click").bind("click", () => {
+            var parameters = [];
+
+            var player = mainController.currentPlayer();
+            var targetFrame = mainController.currentTarget();
+            var target = targetFrame.model;
+            for (let item of this.model.signature)
+                parameters.push(eval(item));
+            this.model.delegate.apply(parameters.shift(), parameters);
+            });
     }
 }
 
@@ -287,24 +293,13 @@ jQuery(() => {
             actionList: [
                 {
                     name: "ausculter (complet)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name);  }
-                }, {
-                    name: "ausculter (tête)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
-                }, {
-                    name: "ausculter (torse)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
-                }, {
-                    name: "ausculter (jambe)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
-                }, {
+                    signature: ["target", "targetFrame"],
+                    delegate: function (frame: targetController) { alert("blessures: " + JSON.stringify(this.injuries)); frame.updateVisual(); }
+                },
+                {
                     name: "opérer",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
+                    signature: ["target", "targetFrame"],
+                    delegate: function () { alert("a ausculté : " + this.name); }
                 }, {
                     name: "évacuer",
                     signature: ["objectModel.animatedActor"],
@@ -358,15 +353,17 @@ jQuery(() => {
         new objectModel.ressource("perche", 3, "unités" )
     ]);
     jQuery("#targetList").data("model", [
-        { name: "Joueur", infos: ["médecin leader"], avatarUrl: "./images/victeams2.png" },
-        { name: "Infirmier julien", infos: ["Efficace en pansements", "efficace en perfusions"], avatarUrl: "./images/victeams2.png" },
-        { name: "Auxiliaire jacob", infos: [""], avatarUrl: "./images/victeams2.png" },
-        { name: "Auxiliaire julie", infos: [], avatarUrl: "./images/victeams1.png" },
-        { name: "Blessé 1", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
-        { name: "Blessé 2", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
-        { name: "Blessé 3", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
-        { name: "Blessé 4", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
+        new objectModel.doctor({ name: "Joueur", infos: ["médecin leader"], avatarUrl: "./images/victeams2.png" }),
+        new objectModel.doctor({ name: "Infirmier julien", infos: ["Efficace en pansements", "efficace en perfusions"], avatarUrl: "./images/victeams2.png" }),
+        new objectModel.nurse({ name: "Auxiliaire jacob", infos: [""], avatarUrl: "./images/victeams2.png" }),
+        new objectModel.nurse({ name: "Auxiliaire julie", infos: [], avatarUrl: "./images/victeams1.png" }),
+        new objectModel.patient({ name: "Blessé 1", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
+        new objectModel.patient({ name: "Blessé 2", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
+        new objectModel.patient({ name: "Blessé 3", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
+        new objectModel.patient({ name: "Blessé 4", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
 
     ]);
 });
 jQuery(() => makePageLayout(jQuery("body")));
+
+jQuery()

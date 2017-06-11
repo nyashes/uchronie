@@ -26,20 +26,23 @@ var objectModel;
     objectModel.actor = actor;
     var animatedActor = (function (_super) {
         __extends(animatedActor, _super);
-        function animatedActor(name) {
-            _super.call(this, name);
+        function animatedActor(base) {
+            _super.call(this, "");
             this.defiance = new objectModel.nonDeterministicState(0);
+            for (var prop in base)
+                this[prop] = base[prop];
         }
         return animatedActor;
     }(actor));
     objectModel.animatedActor = animatedActor;
     var patient = (function (_super) {
         __extends(patient, _super);
-        function patient(name) {
-            _super.call(this, name);
+        function patient(base) {
+            _super.call(this, base);
             //certain patients ont suivi une formation de premier soin
             this.firstAidSkill = new objectModel.nonDeterministicState(Math.floor(Math.random() * 80));
             this.gravity = new objectModel.nonDeterministicState(1 + (Math.random() - 0.01) * 4);
+            this.injuries = new Array();
             this.defiance.set(0, function () { return 25 + Math.random() * 25; });
         }
         return patient;

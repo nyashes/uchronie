@@ -74,22 +74,20 @@ var baseListController = (function (_super) {
         newElement.removeClass("noParse");
         if (typeof item != "object") {
             newElement.text(item);
-            console.log(item + " put into " + newElement.html());
         }
         else {
             newElement.data("model", item);
-            console.log(JSON.stringify(item) + " put into " + newElement.html());
         }
         this.element.append(newElement);
     };
     return baseListController;
 }(baseController));
-var targetContoller = (function (_super) {
-    __extends(targetContoller, _super);
-    function targetContoller() {
+var targetController = (function (_super) {
+    __extends(targetController, _super);
+    function targetController() {
         _super.apply(this, arguments);
     }
-    targetContoller.prototype.init = function () {
+    targetController.prototype.init = function () {
         var _this = this;
         this.element.attr("id", this.model.name);
         this.element.find(".avatar").css("background-image", "url('" + this.model.avatarUrl + "')");
@@ -97,25 +95,25 @@ var targetContoller = (function (_super) {
         this.element.find(".infos").data("model", this.model.infos);
         this.element.unbind('click').bind('click', function () { return _this.click(_this); });
     };
-    targetContoller.prototype.updateVisual = function () {
+    targetController.prototype.updateVisual = function () {
         var patient = this.model;
         for (var i = 0; i <= 4; ++i)
             this.element.toggleClass("gravity-" + i, Math.floor(patient.gravity.current()) == i);
     };
-    targetContoller.prototype.click = function (instance) {
+    targetController.prototype.click = function (instance) {
         instance.element.siblings(".selected").removeClass("selected");
         if (instance.element.hasClass("selected"))
             instance.element.removeClass("selected");
         else
             instance.element.addClass("selected");
     };
-    targetContoller.prototype.select = function () {
+    targetController.prototype.select = function () {
         this.element.siblings(".selected").removeClass("selected");
         this.element.addClass("selected");
     };
-    targetContoller.prototype.hover = function (instance) {
+    targetController.prototype.hover = function (instance) {
     };
-    return targetContoller;
+    return targetController;
 }(baseController));
 var catController = (function (_super) {
     __extends(catController, _super);
@@ -140,7 +138,17 @@ var actionController = (function (_super) {
     actionController.prototype.init = function () {
         var _this = this;
         this.element.children(".name").text(this.model.name);
-        this.element.children(".delegate").unbind("click").bind("click", function () { return _this.model.delegate(mainController.currentTarget().model); });
+        this.element.children(".delegate").unbind("click").bind("click", function () {
+            var parameters = [];
+            var player = mainController.currentPlayer();
+            var targetFrame = mainController.currentTarget();
+            var target = targetFrame.model;
+            for (var _i = 0, _a = _this.model.signature; _i < _a.length; _i++) {
+                var item = _a[_i];
+                parameters.push(eval(item));
+            }
+            _this.model.delegate.apply(parameters.shift(), parameters);
+        });
     };
     return actionController;
 }(baseController));
@@ -312,24 +320,13 @@ jQuery(function () {
             actionList: [
                 {
                     name: "ausculter (complet)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
-                }, {
-                    name: "ausculter (tête)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
-                }, {
-                    name: "ausculter (torse)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
-                }, {
-                    name: "ausculter (jambe)",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
-                }, {
+                    signature: ["target", "targetFrame"],
+                    delegate: function (frame) { alert("blessures: " + JSON.stringify(this.injuries)); frame.updateVisual(); }
+                },
+                {
                     name: "opérer",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
+                    signature: ["target", "targetFrame"],
+                    delegate: function () { alert("a ausculté : " + this.name); }
                 }, {
                     name: "évacuer",
                     signature: ["objectModel.animatedActor"],
@@ -383,15 +380,16 @@ jQuery(function () {
         new objectModel.ressource("perche", 3, "unités")
     ]);
     jQuery("#targetList").data("model", [
-        { name: "Joueur", infos: ["médecin leader"], avatarUrl: "./images/victeams2.png" },
-        { name: "Infirmier julien", infos: ["Efficace en pansements", "efficace en perfusions"], avatarUrl: "./images/victeams2.png" },
-        { name: "Auxiliaire jacob", infos: [""], avatarUrl: "./images/victeams2.png" },
-        { name: "Auxiliaire julie", infos: [], avatarUrl: "./images/victeams1.png" },
-        { name: "Blessé 1", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
-        { name: "Blessé 2", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
-        { name: "Blessé 3", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
-        { name: "Blessé 4", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" },
+        new objectModel.doctor({ name: "Joueur", infos: ["médecin leader"], avatarUrl: "./images/victeams2.png" }),
+        new objectModel.doctor({ name: "Infirmier julien", infos: ["Efficace en pansements", "efficace en perfusions"], avatarUrl: "./images/victeams2.png" }),
+        new objectModel.nurse({ name: "Auxiliaire jacob", infos: [""], avatarUrl: "./images/victeams2.png" }),
+        new objectModel.nurse({ name: "Auxiliaire julie", infos: [], avatarUrl: "./images/victeams1.png" }),
+        new objectModel.patient({ name: "Blessé 1", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
+        new objectModel.patient({ name: "Blessé 2", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
+        new objectModel.patient({ name: "Blessé 3", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
+        new objectModel.patient({ name: "Blessé 4", infos: ["nom: inconnu", "blessures: inconnu"], avatarUrl: "./images/victim.png" }),
     ]);
 });
 jQuery(function () { return makePageLayout(jQuery("body")); });
+jQuery();
 //# sourceMappingURL=app.js.map

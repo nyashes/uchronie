@@ -8,7 +8,7 @@
 /*-----------------------------------------------------------------*/
 
 .actorInfo {
-    background-color: transparent;
+    background-color: gainsboro;
     border: solid 1px black;
     width: 110px;
     height: 110px;
@@ -33,7 +33,6 @@
 }
 
 .actorInfo:hover, .actorInfo.selected {
-    background-color: gainsboro;
     height: 160px;
     width: 160px;
     position:relative;

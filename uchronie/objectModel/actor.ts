@@ -22,15 +22,17 @@
         defiance = new nonDeterministicState<number>(0);
         infos: string[];
         avatarUrl: string;
-        constructor(name: string) { super(name); }
+        constructor(base: any) { super(""); for (var prop in base) this[prop] = base[prop]; }
     }
 
     export class patient extends animatedActor {
         //certain patients ont suivi une formation de premier soin
         firstAidSkill = new nonDeterministicState<number>(Math.floor(Math.random() * 80));
         gravity = new nonDeterministicState<number>(1 + (Math.random() - 0.01) * 4);
-        public constructor(name: string) {
-            super(name);
+        injuries = new Array<actionMeta>();
+        
+        public constructor(base: any) {
+            super(base);
             this.defiance.set(0, () => 25 + Math.random() * 25);
         }
     }
