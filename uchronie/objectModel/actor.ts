@@ -29,11 +29,29 @@
         //certain patients ont suivi une formation de premier soin
         firstAidSkill = new nonDeterministicState<number>(Math.floor(Math.random() * 80));
         gravity = new nonDeterministicState<number>(1 + (Math.random() - 0.01) * 4);
-        injuries = new Array<actionMeta>();
-        
+        injuries = new nonDeterministicState<Array<actionMeta>>(new Array<actionMeta>());
+
+        private eventIdx: number;
         public constructor(base: any) {
             super(base);
             this.defiance.set(0, () => 25 + Math.random() * 25);
+            this.eventIdx = tick.push(() => this.onUpdate());
+        }
+
+        public onUpdate() {
+            var target = this;
+            for (let item of this.injuries.current()) {
+                let parameters = [];
+                for (let param of item.signature)
+                    parameters.push(eval(param));
+                item.delegate.apply(parameters.shift(), parameters);
+            }
+        }
+
+        public kill() {
+            let targetList = mainController.submodules["targetListController"]["targetList"];
+            this.gravity.setKeyFrame(currentTime, 5);
+            this.injuries.setKeyFrame(currentTime, []);
         }
     }
 

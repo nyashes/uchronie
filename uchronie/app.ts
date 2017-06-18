@@ -32,7 +32,7 @@ class baseController<T> {
                     this.element.children("." + prop).text(this.model[prop]);
                 else if (this.model[prop].current != undefined) {
                     let capture = prop;
-                    objectModel.tick.push(() => this.element.children("." + capture).text(this.model[capture].current()));
+                    objectModel.guiTick.push(() => this.element.children("." + capture).text(this.model[capture].current()));
                 }
                 else
                     this.element.children("." + prop).data("model", this.model[prop]);
@@ -137,7 +137,7 @@ class gameEventController extends baseController<objectModel.gameEvent> {
             this.model.eventClass.setKeyFrame(objectModel.currentTime, 'discared');
         });
         this.element.text(this.model.text);
-        objectModel.tick.push(() => {
+        objectModel.guiTick.push(() => {
             this.element.removeClass();
             this.element.addClass(this.model.eventClass.current());
         });
@@ -202,7 +202,7 @@ class timelineController extends baseController<any> {
 
         });
 
-        objectModel.tick.push(() => this.changePosition(objectModel.currentTime));
+        objectModel.guiTick.push(() => this.changePosition(objectModel.currentTime));
     }
     public currentPosition(): number {
         return this.dragged.offset().left;
@@ -294,7 +294,35 @@ jQuery(() => {
                 {
                     name: "ausculter (complet)",
                     signature: ["target", "targetFrame"],
-                    delegate: function (frame: targetController) { alert("blessures: " + JSON.stringify(this.injuries)); frame.updateVisual(); }
+                    delegate: function (frame: targetController) { alert("blessures: " + JSON.stringify(this.injuries.current().map(x => x.name))); frame.updateVisual(); }
+                },
+                {
+                    name: "bander",
+                    signature: ["target"],
+                    delegate: function () {
+                        let newar = this.injuries.get(objectModel.currentTime - 1).filter(x => x != injuries.hemoragy);
+                        this.injuries.setKeyFrame(objectModel.currentTime, newar);
+                        mainController.submodules["ressourceListController"]["sideBarLeft"].add("pansements", -1);
+                        alert("bandage appliqué");
+                    }
+                },
+                {
+                    name: "perfusion augmentin",
+                    signature: ["target"],
+                    delegate: function () {
+                        if (this.injuries.current().filter(x => x == injuries.perfusion).length > 0) {
+                            let newar = this.injuries.get(objectModel.currentTime - 1).filter(x => x != injuries.perfusion);
+                            this.injuries.setKeyFrame(objectModel.currentTime, newar);
+                            alert("perfusion retirée");
+                        }
+                        else {
+                            let newar = this.injuries.get(objectModel.currentTime - 1).filter(x => x != injuries.bactery);
+                            newar.push(injuries.perfusion);
+                            this.injuries.setKeyFrame(objectModel.currentTime, newar);
+                            mainController.submodules["ressourceListController"]["sideBarLeft"].add("perche", -1);
+                            alert("perfusion appliquée");
+                        }
+                    }
                 },
                 {
                     name: "opérer",

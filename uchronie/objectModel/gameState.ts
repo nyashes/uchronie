@@ -1,13 +1,18 @@
 ﻿namespace objectModel {
     type time = number;
     export var currentTime: time = 0;
-    export var tick = [];
-    window.setInterval(() => { for (let f of tick) f(); }, 100);
 
-    var binding = window.setInterval(() => currentTime++, 100);
+    export var guiTick = [];
+    export var tick = [];
+
+    window.setInterval(() => { for (let f of guiTick) if (f) f(); }, 100);
+
+    var upd = () => { for (let f of tick) if (f) f(); };
+
+    var binding = window.setInterval(() => { currentTime++; upd(); }, 100);
     export function play() {
         pause();
-        binding = window.setInterval(() => currentTime++, 100);
+        binding = window.setInterval(() => { currentTime++; upd(); }, 100);
     }
     export function pause() {
         window.clearInterval(binding);
@@ -41,18 +46,24 @@
 
         public get(t: time): T {
             let filtered = this.stateStack.filter((x) => x.t <= t);
-            if (filtered.pop)
+            if (filtered.length > 0)
                 return filtered.pop().v;
             return undefined;
         }
 
         public set(t: time, transformation: (current: T) => T) {
+            this.setKeyFrame(t, this.current());
             this.stateStack = this.stateStack.map((x) => x.t >= t ? { t: x.t, v: transformation(x.v) } : x);
         }
 
         public setKeyFrame(t: time, v: T) {
-            this.stateStack.push({ t: t, v: v });
-            this.stateStack.sort((a, b) => a.t < b.t ? -1 : 1);
+            let filtered = this.stateStack.filter((x) => x.t == t);
+            if (filtered.length > 0)
+                filtered.pop().v = v;
+            else {
+                this.stateStack.push({ t: t, v: v });
+                this.stateStack.sort((a, b) => a.t < b.t ? -1 : 1);
+            }
         }
 
         public constructor(v?: T) {

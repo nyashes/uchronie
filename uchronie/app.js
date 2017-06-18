@@ -32,7 +32,7 @@ var baseController = (function () {
                     this_1.element.children("." + prop).text(this_1.model[prop]);
                 else if (this_1.model[prop].current != undefined) {
                     var capture_1 = prop;
-                    objectModel.tick.push(function () { return _this.element.children("." + capture_1).text(_this.model[capture_1].current()); });
+                    objectModel.guiTick.push(function () { return _this.element.children("." + capture_1).text(_this.model[capture_1].current()); });
                 }
                 else
                     this_1.element.children("." + prop).data("model", this_1.model[prop]);
@@ -164,7 +164,7 @@ var gameEventController = (function (_super) {
             _this.model.eventClass.setKeyFrame(objectModel.currentTime, 'discared');
         });
         this.element.text(this.model.text);
-        objectModel.tick.push(function () {
+        objectModel.guiTick.push(function () {
             _this.element.removeClass();
             _this.element.addClass(_this.model.eventClass.current());
         });
@@ -240,7 +240,7 @@ var timelineController = (function (_super) {
                 play.text("play");
             }
         });
-        objectModel.tick.push(function () { return _this.changePosition(objectModel.currentTime); });
+        objectModel.guiTick.push(function () { return _this.changePosition(objectModel.currentTime); });
     };
     timelineController.prototype.currentPosition = function () {
         return this.dragged.offset().left;
@@ -321,7 +321,35 @@ jQuery(function () {
                 {
                     name: "ausculter (complet)",
                     signature: ["target", "targetFrame"],
-                    delegate: function (frame) { alert("blessures: " + JSON.stringify(this.injuries)); frame.updateVisual(); }
+                    delegate: function (frame) { alert("blessures: " + JSON.stringify(this.injuries.current().map(function (x) { return x.name; }))); frame.updateVisual(); }
+                },
+                {
+                    name: "bander",
+                    signature: ["target"],
+                    delegate: function () {
+                        var newar = this.injuries.get(objectModel.currentTime - 1).filter(function (x) { return x != injuries.hemoragy; });
+                        this.injuries.setKeyFrame(objectModel.currentTime, newar);
+                        mainController.submodules["ressourceListController"]["sideBarLeft"].add("pansements", -1);
+                        alert("bandage appliqué");
+                    }
+                },
+                {
+                    name: "perfusion augmentin",
+                    signature: ["target"],
+                    delegate: function () {
+                        if (this.injuries.current().filter(function (x) { return x == injuries.perfusion; }).length > 0) {
+                            var newar = this.injuries.get(objectModel.currentTime - 1).filter(function (x) { return x != injuries.perfusion; });
+                            this.injuries.setKeyFrame(objectModel.currentTime, newar);
+                            alert("perfusion retirée");
+                        }
+                        else {
+                            var newar = this.injuries.get(objectModel.currentTime - 1).filter(function (x) { return x != injuries.bactery; });
+                            newar.push(injuries.perfusion);
+                            this.injuries.setKeyFrame(objectModel.currentTime, newar);
+                            mainController.submodules["ressourceListController"]["sideBarLeft"].add("perche", -1);
+                            alert("perfusion appliquée");
+                        }
+                    }
                 },
                 {
                     name: "opérer",

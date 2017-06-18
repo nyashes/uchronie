@@ -38,13 +38,32 @@ var objectModel;
     var patient = (function (_super) {
         __extends(patient, _super);
         function patient(base) {
+            var _this = this;
             _super.call(this, base);
             //certain patients ont suivi une formation de premier soin
             this.firstAidSkill = new objectModel.nonDeterministicState(Math.floor(Math.random() * 80));
             this.gravity = new objectModel.nonDeterministicState(1 + (Math.random() - 0.01) * 4);
-            this.injuries = new Array();
+            this.injuries = new objectModel.nonDeterministicState(new Array());
             this.defiance.set(0, function () { return 25 + Math.random() * 25; });
+            this.eventIdx = objectModel.tick.push(function () { return _this.onUpdate(); });
         }
+        patient.prototype.onUpdate = function () {
+            var target = this;
+            for (var _i = 0, _a = this.injuries.current(); _i < _a.length; _i++) {
+                var item = _a[_i];
+                var parameters = [];
+                for (var _b = 0, _c = item.signature; _b < _c.length; _b++) {
+                    var param = _c[_b];
+                    parameters.push(eval(param));
+                }
+                item.delegate.apply(parameters.shift(), parameters);
+            }
+        };
+        patient.prototype.kill = function () {
+            var targetList = mainController.submodules["targetListController"]["targetList"];
+            this.gravity.setKeyFrame(objectModel.currentTime, 5);
+            this.injuries.setKeyFrame(objectModel.currentTime, []);
+        };
         return patient;
     }(animatedActor));
     objectModel.patient = patient;
