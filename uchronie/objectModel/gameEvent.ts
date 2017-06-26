@@ -14,6 +14,27 @@
     }
 }
 
+namespace events {
+    export function augmentin() {
+        return new objectModel.gameEvent(
+            () => mainController.submodules["ressourceListController"]["sideBarLeft"].add('morphine', 50),
+            "livraison d'augmentin",
+            "notification"
+        );
+    };
+
+    export function scream() {
+        let list = mainController.submodules["targetListController"]["targetList"].element.children();
+        let picked = Math.ceil((list.length() - 1) * Math.random() + 0.001);
+        let name = list.get(picked).data().name;
+        return new objectModel.gameEvent(
+            () => mainController.submodules["targetListController"]["targetList"].select(name),
+            name + " cri",
+            "warning"
+        );
+    };
+}
+
 namespace injuries {
     export var hemoragy = {
         name: "hémoragie",
@@ -45,7 +66,9 @@ namespace injuries {
             mainController.submodules["ressourceListController"]["sideBarLeft"].add("augmentin", -1);
             if (target.gravity.current() < 0) { //overdose
                 target.kill();
-                alert(target.name + " est mort d'une overdose");
+                let event = new objectModel.gameEvent(() => null, target.name + " est mort d'une overdose", "critical"); 
+                mainController.submodules["baseListController"]["console"].model.push(event);
+                mainController.submodules["baseListController"]["console"].push(event);
             }
         }
     };

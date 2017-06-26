@@ -66,7 +66,7 @@ var baseListController = (function (_super) {
         if (baseElement.attr("controller"))
             mainController.submodules[baseElement.attr("controller")] = [];
     };
-    baseListController.prototype.pushItem = function (item) {
+    baseListController.prototype.pushItem = function (item, bind) {
         var baseElement = this.element.children(".element");
         var newElement = baseElement.clone();
         newElement.css("display", this.displayProprety);
@@ -78,7 +78,12 @@ var baseListController = (function (_super) {
         else {
             newElement.data("model", item);
         }
+        if (bind)
+            mvcBinder(newElement);
         this.element.append(newElement);
+    };
+    baseListController.prototype.push = function (item) {
+        this.pushItem(item, true);
     };
     return baseListController;
 }(baseController));
@@ -351,39 +356,16 @@ jQuery(function () {
                         }
                     }
                 },
-                {
-                    name: "opérer",
-                    signature: ["target", "targetFrame"],
-                    delegate: function () { alert("a ausculté : " + this.name); }
-                }, {
-                    name: "évacuer",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
-                }, {
-                    name: "vérifier matériel",
-                    signature: ["objectModel.animatedActor"],
-                    delegate: function (actor) { alert("a ausculté : " + actor.name); }
-                }
             ]
         },
         {
             name: "ordre",
             actionList: [
                 {
-                    name: "ordre de médecin",
-                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
-                    delegate: function (actor) { alert(this.name + " a ausculté : " + actor.name); }
+                    name: "donner des ordres",
+                    signature: ["target"],
+                    delegate: function () { alert(this.name + " a ausculté : " + this.name); }
                 },
-                {
-                    name: "ordre d'infirmier",
-                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
-                    delegate: function (actor) { alert(this.name + " a ausculté : " + actor.name); }
-                },
-                {
-                    name: "ordre de patient",
-                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
-                    delegate: function (actor) { alert(this.name + " a ausculté : " + actor.name); }
-                }
             ]
         },
     ]);

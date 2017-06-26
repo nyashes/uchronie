@@ -12,6 +12,22 @@ var objectModel;
     }());
     objectModel.gameEvent = gameEvent;
 })(objectModel || (objectModel = {}));
+var events;
+(function (events) {
+    function augmentin() {
+        return new objectModel.gameEvent(function () { return mainController.submodules["ressourceListController"]["sideBarLeft"].add('morphine', 50); }, "livraison d'augmentin", "notification");
+    }
+    events.augmentin = augmentin;
+    ;
+    function scream() {
+        var list = mainController.submodules["targetListController"]["targetList"].element.children();
+        var picked = Math.ceil((list.length() - 1) * Math.random() + 0.001);
+        var name = list.get(picked).data().name;
+        return new objectModel.gameEvent(function () { return mainController.submodules["targetListController"]["targetList"].select(name); }, name + " cri", "warning");
+    }
+    events.scream = scream;
+    ;
+})(events || (events = {}));
 var injuries;
 (function (injuries) {
     injuries.hemoragy = {
@@ -42,7 +58,9 @@ var injuries;
             mainController.submodules["ressourceListController"]["sideBarLeft"].add("augmentin", -1);
             if (target.gravity.current() < 0) {
                 target.kill();
-                alert(target.name + " est mort d'une overdose");
+                var event_1 = new objectModel.gameEvent(function () { return null; }, target.name + " est mort d'une overdose", "critical");
+                mainController.submodules["baseListController"]["console"].model.push(event_1);
+                mainController.submodules["baseListController"]["console"].push(event_1);
             }
         }
     };

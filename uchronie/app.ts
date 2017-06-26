@@ -58,7 +58,7 @@ class baseListController<T> extends baseController<T[]> {
         if (baseElement.attr("controller"))
             mainController.submodules[baseElement.attr("controller")] = [];
     }
-    public pushItem(item: T) {
+    private pushItem(item: T, bind?: boolean) {
         let baseElement = this.element.children(".element");
         var newElement = baseElement.clone();
         newElement.css("display", this.displayProprety);
@@ -70,7 +70,11 @@ class baseListController<T> extends baseController<T[]> {
         else {
             newElement.data("model", item);
         }
+        if (bind) mvcBinder(newElement);
         this.element.append(newElement);
+    }
+    public push(item: T) {
+        this.pushItem(item, true);
     }
 }
 
@@ -324,7 +328,7 @@ jQuery(() => {
                         }
                     }
                 },
-                {
+                /*{
                     name: "opérer",
                     signature: ["target", "targetFrame"],
                     delegate: function () { alert("a ausculté : " + this.name); }
@@ -336,27 +340,17 @@ jQuery(() => {
                     name: "vérifier matériel",
                     signature: ["objectModel.animatedActor"],
                     delegate: function (actor: objectModel.animatedActor) { alert("a ausculté : " + actor.name); }
-                }
+                }*/
             ]
         },
         {
             name: "ordre",
             actionList: [
                 {
-                    name: "ordre de médecin",
-                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert(this.name + " a ausculté : " + actor.name); }
+                    name: "donner des ordres",
+                    signature: ["target"],
+                    delegate: function () { alert(this.name + " a ausculté : " + this.name); }
                 },
-                {
-                    name: "ordre d'infirmier",
-                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert(this.name + " a ausculté : " + actor.name); }
-                },
-                {
-                    name: "ordre de patient",
-                    signature: ["objectModel.animatedActor", "objectModel.animatedActor"],
-                    delegate: function (actor: objectModel.animatedActor) { alert(this.name + " a ausculté : " + actor.name); }
-                }
             ]
         },
     ]);
