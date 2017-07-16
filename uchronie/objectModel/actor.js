@@ -27,10 +27,19 @@ var objectModel;
     var animatedActor = (function (_super) {
         __extends(animatedActor, _super);
         function animatedActor(base) {
+            var _this = this;
             _super.call(this, "");
             this.defiance = new objectModel.nonDeterministicState(0);
             for (var prop in base)
                 this[prop] = base[prop];
+            if (this["constructor"]) {
+                var ctor_1 = function () {
+                    _this["constructor"].call(_this);
+                    delete _this["constructor"];
+                    objectModel.guiTick.splice(objectModel.guiTick.indexOf(ctor_1), 1);
+                };
+                objectModel.guiTick.push(ctor_1);
+            }
         }
         return animatedActor;
     }(actor));
@@ -44,7 +53,7 @@ var objectModel;
             this.firstAidSkill = new objectModel.nonDeterministicState(Math.floor(Math.random() * 80));
             this.gravity = new objectModel.nonDeterministicState(1 + (Math.random() - 0.01) * 4);
             this.injuries = new objectModel.nonDeterministicState(new Array());
-            this.defiance.set(0, function () { return 25 + Math.random() * 25; });
+            //this.defiance.set(0, () => 25 + Math.random() * 25);
             this.eventIdx = objectModel.tick.push(function () { return _this.onUpdate(); });
         }
         patient.prototype.onUpdate = function () {

@@ -3,6 +3,7 @@
         public name: string;
         public actionList: actionMeta[];
     }
+
     export class actionMeta {
         public name: string;
         public return: string;
@@ -22,7 +23,21 @@
         defiance = new nonDeterministicState<number>(0);
         infos: string[];
         avatarUrl: string;
-        constructor(base: any) { super(""); for (var prop in base) this[prop] = base[prop]; }
+        constructor(base: any) {
+            super("");
+
+            for (var prop in base)
+                this[prop] = base[prop];
+
+            if (this["constructor"]) {
+                let ctor = () => {
+                    this["constructor"].call(this);
+                    delete this["constructor"];
+                    objectModel.guiTick.splice(objectModel.guiTick.indexOf(ctor), 1);
+                };
+                objectModel.guiTick.push(ctor);
+            }
+        }
     }
 
     export class patient extends animatedActor {
@@ -34,7 +49,7 @@
         private eventIdx: number;
         public constructor(base: any) {
             super(base);
-            this.defiance.set(0, () => 25 + Math.random() * 25);
+            //this.defiance.set(0, () => 25 + Math.random() * 25);
             this.eventIdx = tick.push(() => this.onUpdate());
         }
 

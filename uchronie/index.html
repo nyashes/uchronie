@@ -3,14 +3,32 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Démonstration unchronie</title>
+    <title>uchronie</title>
     <link rel="stylesheet" href="app.css" type="text/css" />
     <script type="text/javascript" src="Scripts/jquery-3.1.1.js"></script>
     
-    <script src="objectModel/actor.js"></script>
-    <script src="objectModel/gameState.js"></script>
-    <script src="objectModel/gameEvent.js"></script>
-    <script src="app.js"></script>
+    <script type="text/javascript" src="objectModel/actor.js"></script>
+    <script type="text/javascript" src="objectModel/gameState.js"></script>
+    <script type="text/javascript" src="objectModel/gameEvent.js"></script>
+
+    <script type="text/javascript" src="controllers/mainController.js"></script>
+
+    <!-- controllers -->
+    <script type="text/javascript" src="controllers/baseController.js"></script>
+    <script type="text/javascript" src="controllers/baseListController.js"></script>
+    <script type="text/javascript" src="controllers/actionController.js"></script>
+    <script type="text/javascript" src="controllers/catController.js"></script>
+    <script type="text/javascript" src="controllers/gameEventController.js"></script>
+    <script type="text/javascript" src="controllers/ressourceListController.js"></script>
+    <script type="text/javascript" src="controllers/targetListController.js"></script>
+    <script type="text/javascript" src="controllers/timelineController.js"></script>
+
+
+    <script type="text/javascript" src="app.js"></script>
+
+    <script type="text/javascript">
+        jQuery(function () { loadAllModel("scenario/test.json.js", function () { makePageLayout(jQuery("body")); }); });
+    </script>
 </head>
 <body>
     <div class="vpartition" id="gameBoard">

@@ -43,10 +43,20 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />
+    <TypeScriptCompile Include="controllers\actionController.ts" />
+    <TypeScriptCompile Include="controllers\baseController.ts" />
+    <TypeScriptCompile Include="controllers\baseListController.ts" />
+    <TypeScriptCompile Include="controllers\catController.ts" />
+    <TypeScriptCompile Include="controllers\gameEventController.ts" />
+    <TypeScriptCompile Include="controllers\mainController.ts" />
+    <TypeScriptCompile Include="controllers\ressourceListController.ts" />
+    <TypeScriptCompile Include="controllers\targetListController.ts" />
+    <TypeScriptCompile Include="controllers\timelineController.ts" />
     <TypeScriptCompile Include="index.d.ts" />
     <TypeScriptCompile Include="objectModel\actor.ts" />
     <TypeScriptCompile Include="objectModel\gameEvent.ts" />
     <TypeScriptCompile Include="objectModel\gameState.ts" />
+    <TypeScriptCompile Include="scenario\test.json.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
