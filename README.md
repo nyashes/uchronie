@@ -1,5 +1,5 @@
-# uchronie
-Projet uchronie
+# OBSOLETE
 
-TODO: remplir avec des infos utiles
-Utiliser l'application en ligne : https://nyashes.github.io/uchronie/uchronie/
+
+
+moved to: https://github.com/nyashes/uchronie-vsc
